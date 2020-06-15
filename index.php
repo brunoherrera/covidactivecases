@@ -18,8 +18,12 @@ tr:nth-child(even) {
   background-color: #dddddd;
 }
 
-h1, h5 {
+h1, h5, h2 {
   text-align: center;
+}
+
+h2 {
+  color: #8f1f1f;
 }
 </style>
 </head>
@@ -59,7 +63,7 @@ $getData = json_decode($res, true); // decoding JSON string
 
 echo "<h1>Printable COVID-19 Active Cases as of $dataDate</h1>"; // html crap
 echo "<h5>Source: <a href=\"https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data\" target=\"_blank\">JHU CSSE COVID-19 Dataset</a></h5>"; // html crap
-echo "<h5>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h5>"; // html crap
+echo "<h2>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h2>"; // html crap
 echo "<br>"; // html crap
 
 $withActiveCases = array(); // will contain final filtered data to work with
