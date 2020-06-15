@@ -59,6 +59,7 @@ $getData = json_decode($res, true); // decoding JSON string
 
 echo "<h1>Printable COVID-19 Active Cases as of $dataDate</h1>"; // html crap
 echo "<h5>Source: <a href=\"https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data\" target=\"_blank\">JHU CSSE COVID-19 Dataset</a></h5>"; // html crap
+echo "<h5>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h5>"; // html crap
 echo "<br>"; // html crap
 
 $withActiveCases = array(); // will contain final filtered data to work with
@@ -73,10 +74,10 @@ $country = array_column($withActiveCases, 'Country_Region');
 array_multisort($country, SORT_ASC, $withActiveCases); // sort by country
 
 
-$arrayPrev = array(); // will contain previous array to work with the next processing:
+$arrayPrev = array(); // will contain previous array to work with in the next processing:
 foreach ($withActiveCases as $key => $value) { // GET GENERAL COUNTRY DATA (CITIES MERGED INTO A COUNTRY'S TOTAL COUNT)
   if (isset($arrayPrev["Country_Region"])) { // avoid issues with first comparison
-    if ($value["Country_Region"] == $arrayPrev["Country_Region"]) { // if current and previous array are the same
+    if ($value["Country_Region"] == $arrayPrev["Country_Region"]) { // if current and previous array are the same country
       $withActiveCases[$key]["Confirmed"] += $arrayPrev["Confirmed"]; // sum their confirmed cases to current array
       $withActiveCases[$key]["Active"] += $arrayPrev["Active"]; // sum their active cases to current array
       unset($withActiveCases[$key - 1]); // discard previous array
