@@ -32,6 +32,36 @@ h2 {
 
 
 <?php
+date_default_timezone_set('UTC');
+
+function time_elapsed_string($datetime, $full = false) {
+    $now = new DateTime;
+    $ago = new DateTime($datetime);
+    $diff = $now->diff($ago);
+
+    $diff->w = floor($diff->d / 7);
+    $diff->d -= $diff->w * 7;
+
+    $string = array(
+        'y' => 'year',
+        'm' => 'month',
+        'w' => 'week',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    );
+    foreach ($string as $k => &$v) {
+        if ($diff->$k) {
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+        } else {
+            unset($string[$k]);
+        }
+    }
+
+    if (!$full) $string = array_slice($string, 0, 1);
+    return $string ? implode(', ', $string) . ' ago' : 'just now';
+}
 
 function getData($date) { // php function to get and convert csv data to json format
   $url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/" . $date . ".csv"; // pull data
@@ -92,8 +122,9 @@ foreach ($withActiveCases as $key => $value) { // GET GENERAL COUNTRY DATA (CITI
 $active = array_column($withActiveCases, 'Active');
 array_multisort($active, SORT_ASC, $withActiveCases); // sort by active cases (least to greatest)
 
+$elapsed = time_elapsed_string($lastUpdate);
 $lastUpdate = substr($lastUpdate, 0, -3); // trim milliseconds
-echo "<h1>Printable COVID-19 Active Cases as of $lastUpdate UTC</h1>"; // html crap
+echo "<h1>Printable COVID-19 Active Cases as of $lastUpdate UTC ($elapsed)</h1>"; // html crap
 echo "<h5>Source: <a href=\"https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data\" target=\"_blank\">JHU CSSE COVID-19 Dataset</a></h5>"; // html crap
 echo "<h2>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h2>"; // html crap
 echo "<br>"; // html crap
