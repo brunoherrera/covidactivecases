@@ -61,10 +61,6 @@ while (!$res) { // get data with last logged day
 }
 $getData = json_decode($res, true); // decoding JSON string
 
-echo "<h1>Printable COVID-19 Active Cases as of $dataDate</h1>"; // html crap
-echo "<h5>Source: <a href=\"https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data\" target=\"_blank\">JHU CSSE COVID-19 Dataset</a></h5>"; // html crap
-echo "<h2>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h2>"; // html crap
-echo "<br>"; // html crap
 
 $withActiveCases = array(); // will contain final filtered data to work with
 
@@ -77,7 +73,7 @@ foreach ($getData as $key => $value) {
 $country = array_column($withActiveCases, 'Country_Region');
 array_multisort($country, SORT_ASC, $withActiveCases); // sort by country
 
-
+$lastUpdate = "1970-01-01 00:00:00"; // will contain last update date and time
 $arrayPrev = array(); // will contain previous array to work with in the next processing:
 foreach ($withActiveCases as $key => $value) { // GET GENERAL COUNTRY DATA (CITIES MERGED INTO A COUNTRY'S TOTAL COUNT)
   if (isset($arrayPrev["Country_Region"])) { // avoid issues with first comparison
@@ -88,12 +84,19 @@ foreach ($withActiveCases as $key => $value) { // GET GENERAL COUNTRY DATA (CITI
     }
   }
   $arrayPrev = $withActiveCases[$key]; // save current array for next comparison
+  if ($lastUpdate < $value["Last_Update"]) {
+    $lastUpdate = $value["Last_Update"];
+  }
 }
 
 $active = array_column($withActiveCases, 'Active');
 array_multisort($active, SORT_ASC, $withActiveCases); // sort by active cases (least to greatest)
 
-
+$lastUpdate = substr($lastUpdate, 0, -3); // trim milliseconds
+echo "<h1>Printable COVID-19 Active Cases as of $lastUpdate UTC</h1>"; // html crap
+echo "<h5>Source: <a href=\"https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data\" target=\"_blank\">JHU CSSE COVID-19 Dataset</a></h5>"; // html crap
+echo "<h2>For some countries/regions, active cases might be larger because there's no data for recovered cases.</h2>"; // html crap
+echo "<br>"; // html crap
 
 
 // HTML TABLE OUTPUT
