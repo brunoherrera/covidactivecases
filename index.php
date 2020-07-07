@@ -109,6 +109,8 @@ foreach ($withActiveCases as $key => $value) { // GET GENERAL COUNTRY DATA (CITI
   if (isset($arrayPrev["Country_Region"])) { // avoid issues with first comparison
     if ($value["Country_Region"] == $arrayPrev["Country_Region"]) { // if current and previous array are the same country
       $withActiveCases[$key]["Confirmed"] += $arrayPrev["Confirmed"]; // sum their confirmed cases to current array
+      $withActiveCases[$key]["Active"] = (int)$withActiveCases[$key]["Active"]; // prevent bad data foramt from source
+      $arrayPrev["Active"] = (int)$arrayPrev["Active"]; // prevent bad data foramt from source
       $withActiveCases[$key]["Active"] += $arrayPrev["Active"]; // sum their active cases to current array
       unset($withActiveCases[$key - 1]); // discard previous array
     }
